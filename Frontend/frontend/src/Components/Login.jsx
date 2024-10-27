@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 function Login() {
   const [isModalOpen, setModalOpen] = useState(true);
@@ -8,20 +10,40 @@ function Login() {
   const handleClose = () => {
     setModalOpen(false); // Function to close the modal
   };
-  console.log(isModalOpen)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data.email);
+  const onSubmit = async (data) => {
+    const userLogin = {
+      email: data.email,
+      password: data.password,
+    };
+    await axios
+      .post("http://localhost:4002/user/login", userLogin)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data) {
+          toast.success('login successful!');
+          handleClose();
+          window.location.reload();
+        }
+        localStorage.setItem("User", JSON.stringify(res.data.user));
+      })
+      .catch((err) => {
+        if (err.response) {
+          toast.error("Error: " + err.response.data.message);
+        }
+      });
+  };
   return (
     <>
       {isModalOpen && (
         <dialog id="my_modal" className="modal">
           <div className="modal-box dark:bg-slate-900 dark:text-white">
-            <form onSubmit={handleSubmit(onSubmit)}  method="dialog">
+            <form onSubmit={handleSubmit(onSubmit)} method="dialog">
               <button
                 className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                 onClick={handleClose}
@@ -35,7 +57,7 @@ function Login() {
                 <input
                   type="email"
                   placeholder="enter your email"
-                  className="bg-slate-100 py-1 px-3 rounded-md"
+                  className="bg-slate-100 py-1 px-3 rounded-md dark:text-black"
                   {...register("email", { required: true })}
                 />
                 <br />
@@ -48,7 +70,7 @@ function Login() {
                 <input
                   type="password"
                   placeholder="enter your password"
-                  className="bg-slate-100 py-1 px-3 rounded-md"
+                  className="bg-slate-100 py-1 px-3 rounded-md dark:text-black"
                   {...register("password", { required: true })}
                 />
                 <br />
@@ -75,8 +97,7 @@ function Login() {
             </form>
           </div>
         </dialog>
-      )
-      }
+      )}
     </>
   );
 }

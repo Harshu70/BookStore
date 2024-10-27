@@ -2,6 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Login from "./Login";
 import { useForm } from "react-hook-form";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 function Signup() {
   const navigate = useNavigate();
@@ -13,7 +15,29 @@ function Signup() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    const userInfo = {
+      fullname: data.fullname,
+      email: data.email,
+      password: data.password,
+    };
+    await axios
+      .post("http://localhost:4002/user/signup", userInfo)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data) {
+          toast.success("signup successful!");
+          navigate("/");
+        }
+        localStorage.setItem("User", JSON.stringify(res.data.user));
+        window.location.reload();
+      })
+      .catch((err) => {
+        if (err.response) { 
+          toast.error("Error: " + err.response.data.message);
+        }
+      });
+  };
   return (
     <div className="flex justify-center items-center h-screen text-lg dark:bg-slate-900">
       <div className="modal-box overflow-hidden dark:bg-slate-800 dark:text-white">
@@ -30,11 +54,11 @@ function Signup() {
             <input
               type="text"
               placeholder="enter your name"
-              className="bg-slate-100 py-1 px-3 rounded-md"
-              {...register("name", { required: true })}
+              className="bg-slate-100 py-1 px-3 rounded-md dark:text-black"
+              {...register("fullname", { required: true })}
             />
             <br />
-            {errors.email && (
+            {errors.fullname && (
               <span className="text-red-600 text-sm">
                 This field is required
               </span>
@@ -43,8 +67,8 @@ function Signup() {
             <input
               type="email"
               placeholder="enter your email"
-              className="bg-slate-100 py-1 px-3 rounded-md"
-              {...register("email", { required: true})}
+              className="bg-slate-100 py-1 px-3 rounded-md dark:text-black"
+              {...register("email", { required: true })}
             />
             <br />
             {errors.email && (
@@ -56,11 +80,11 @@ function Signup() {
             <input
               type="password"
               placeholder="enter your password"
-              className="bg-slate-100 py-1 px-3 rounded-md"
+              className="bg-slate-100 py-1 px-3 rounded-md dark:text-black"
               {...register("password", { required: true })}
             />
             <br />
-            {errors.email && (
+            {errors.password && (
               <span className="text-red-600 text-sm">
                 This field is required
               </span>

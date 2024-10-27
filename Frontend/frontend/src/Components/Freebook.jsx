@@ -1,19 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import list from "../../public/list.json";
+import axios from "axios";
 import Cards from "./Cards";
 
 function Freebook() {
-  const bookData = list.filter((data) => data.category === "Free");
+  const [book, setBook] = useState([]);
+  useEffect(() => {
+    const getbook = async () => {
+      try {
+        const res = await axios.get("http://localhost:4002/book");
+        const bookData = res.data.filter((data) => data.category === "Free");
+        setBook(bookData);
+      } catch (error) {
+        console.log("error:courses api ", error);
+      }
+    };
+    getbook();
+  }, []);
+  
   var settings = {
     dots: true,
     infinite: false,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 3,
-    initialSlide: 0,
+    initialSlide: 1,
     responsive: [
       {
         breakpoint: 1024,
@@ -25,11 +38,12 @@ function Freebook() {
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 800,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 2,
           initialSlide: 2,
+          infinite: true,
         },
       },
       {
@@ -37,6 +51,7 @@ function Freebook() {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
+          infinite: true,
         },
       },
     ],
@@ -54,7 +69,7 @@ function Freebook() {
 
         <div className="max-w-screen-2xl md:px-24 px-14 mx-auto pb-4">
           <Slider {...settings}>
-            {bookData.map((item)=>(
+            {book.map((item)=>(
                 <Cards item={item} key={item.id} />
             ))}
           </Slider>
