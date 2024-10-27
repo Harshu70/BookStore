@@ -17,7 +17,7 @@ function Home() {
               placeat illum dolore ullam porro perferendis eaque rem architecto,
               unde nisi neque possimus !
             </p>
-            <label className="input flex items-center gap-2">
+            <label className="input flex items-center gap-2 dark:bg-slate-700">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"

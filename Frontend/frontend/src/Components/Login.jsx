@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -26,11 +26,13 @@ function Login() {
       .then((res) => {
         console.log(res.data);
         if (res.data) {
-          toast.success('login successful!');
+          toast.success("login successful!");
           handleClose();
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+            localStorage.setItem("User", JSON.stringify(res.data.user));
+          }, 1000);
         }
-        localStorage.setItem("User", JSON.stringify(res.data.user));
       })
       .catch((err) => {
         if (err.response) {

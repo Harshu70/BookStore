@@ -12,7 +12,10 @@ function Logout() {
             })
             localStorage.removeItem("User")
             toast.success("Logout successful!")
-            window.location.reload();
+            setTimeout(() => {
+                
+                window.location.reload();
+            }, 1000);
         } catch (error) {
             toast.error("Error:", error.message)
         }

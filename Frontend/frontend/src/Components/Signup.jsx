@@ -30,10 +30,12 @@ function Signup() {
           navigate("/");
         }
         localStorage.setItem("User", JSON.stringify(res.data.user));
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       })
       .catch((err) => {
-        if (err.response) { 
+        if (err.response) {
           toast.error("Error: " + err.response.data.message);
         }
       });
